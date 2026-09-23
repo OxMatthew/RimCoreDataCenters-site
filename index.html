@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>RimCore Data Centers</title>
+<meta name="description" content="A RimWorld mod: research, build and run a data center. Server racks, an upgrade tree, security, an AI core, cartridge specialization, espionage and data contracts.">
+<style>
+  :root {
+    --bg: #0b0f14;
+    --bg-alt: #101720;
+    --card: #141c26;
+    --border: #223042;
+    --text: #dbe4ee;
+    --text-dim: #8fa2b8;
+    --accent: #8cf299;
+    --accent-dim: #5fa66c;
+    --warn: #f2c07a;
+  }
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--text);
+    font-family: -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    line-height: 1.55;
+  }
+  code, .mono { font-family: "SF Mono", "Cascadia Code", Consolas, monospace; }
+  a { color: var(--accent); text-decoration: none; }
+  a:hover { text-decoration: underline; }
+  .wrap { max-width: 1040px; margin: 0 auto; padding: 0 24px; }
+
+  header.top {
+    border-bottom: 1px solid var(--border);
+    background: linear-gradient(180deg, var(--bg-alt), var(--bg));
+    padding: 18px 0;
+  }
+  .topbar { display: flex; align-items: center; justify-content: space-between; }
+  .brand { display: flex; align-items: center; gap: 10px; font-weight: 700; font-size: 18px; }
+  .brand .dot { width: 10px; height: 10px; border-radius: 50%; background: var(--accent); box-shadow: 0 0 10px var(--accent); }
+  nav a { color: var(--text-dim); margin-left: 22px; font-size: 14px; }
+  nav a:hover { color: var(--text); }
+
+  .hero { padding: 72px 0 56px; }
+  .badges { display: flex; gap: 8px; margin-bottom: 18px; flex-wrap: wrap; }
+  .badge {
+    font-size: 12px; padding: 4px 10px; border-radius: 999px;
+    border: 1px solid var(--border); color: var(--text-dim);
+  }
+  .badge.accent { color: var(--accent); border-color: var(--accent-dim); }
+  .hero h1 { font-size: 42px; margin: 0 0 12px; letter-spacing: -0.5px; }
+  .hero .tag { font-size: 19px; color: var(--text-dim); max-width: 620px; margin: 0 0 28px; }
+  .cta { display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 44px; }
+  .btn {
+    display: inline-block; padding: 12px 22px; border-radius: 8px; font-weight: 600; font-size: 14px;
+    border: 1px solid transparent;
+  }
+  .btn.primary { background: var(--accent); color: #0b1a10; }
+  .btn.primary:hover { background: #a6f7b2; text-decoration: none; }
+  .btn.ghost { border-color: var(--border); color: var(--text); }
+  .btn.ghost:hover { border-color: var(--accent-dim); text-decoration: none; }
+
+  .hero-shot {
+    border-radius: 12px; overflow: hidden; border: 1px solid var(--border);
+    box-shadow: 0 30px 60px -20px rgba(0,0,0,0.6);
+  }
+  .hero-shot img { display: block; width: 100%; height: auto; }
+
+  section { padding: 56px 0; border-top: 1px solid var(--border); }
+  section h2 { font-size: 26px; margin: 0 0 6px; }
+  section .lede { color: var(--text-dim); margin: 0 0 34px; max-width: 680px; }
+
+  .grid {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 16px;
+  }
+  .card {
+    background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: 20px;
+  }
+  .card h3 { margin: 0 0 8px; font-size: 16px; color: var(--accent); }
+  .card p { margin: 0; color: var(--text-dim); font-size: 14px; }
+  .card .ver { display: inline-block; font-size: 11px; color: var(--text-dim); border: 1px solid var(--border); border-radius: 999px; padding: 2px 8px; margin-bottom: 10px; }
+
+  .shots { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 14px; }
+  .shots figure { margin: 0; background: var(--card); border: 1px solid var(--border); border-radius: 10px; overflow: hidden; }
+  .shots img { display: block; width: 100%; height: auto; }
+  .shots figcaption { padding: 10px 14px; font-size: 13px; color: var(--text-dim); }
+
+  .facts { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; }
+  .fact { padding: 16px 0; border-top: 1px dashed var(--border); }
+  .fact:first-child { border-top: none; }
+  .fact b { color: var(--text); }
+
+  .changelog .entry { padding: 16px 0; border-top: 1px solid var(--border); }
+  .changelog .entry:first-child { border-top: none; }
+  .changelog .v { color: var(--accent); font-weight: 700; margin-right: 10px; }
+
+  footer { padding: 40px 0 60px; color: var(--text-dim); font-size: 13px; }
+  footer a { color: var(--text-dim); }
+  footer .cols { display: flex; justify-content: space-between; gap: 20px; flex-wrap: wrap; }
+
+  @media (max-width: 640px) {
+    .hero h1 { font-size: 32px; }
+    .topbar { flex-direction: column; align-items: flex-start; gap: 10px; }
+    nav a { margin-left: 0; margin-right: 18px; }
+  }
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div class="wrap topbar">
+    <div class="brand"><span class="dot"></span> RimCore Data Centers</div>
+    <nav>
+      <a href="#features">Features</a>
+      <a href="#shots">Screenshots</a>
+      <a href="#changelog">Changelog</a>
+      <a href="https://steamcommunity.com/sharedfiles/filedetails/?id=3806390467">Workshop</a>
+    </nav>
+  </div>
+</header>
+
+<div class="wrap hero">
+  <div class="badges">
+    <span class="badge accent">v0.5.0</span>
+    <span class="badge">RimWorld 1.5 &amp; 1.6</span>
+    <span class="badge">MIT License</span>
+    <span class="badge">No DLC &middot; No Harmony</span>
+  </div>
+  <h1>Build a working server room.<br>Keep it powered, cool, and paying off.</h1>
+  <p class="tag">Research Data Center Infrastructure, then construct racks of servers that compile valuable Data Cartridges for traders. A real midgame investment: power, cooling, skilled colonists, and a pile of components &mdash; and it rewards you when you run it well.</p>
+  <div class="cta">
+    <a class="btn primary" href="https://steamcommunity.com/sharedfiles/filedetails/?id=3806390467">Subscribe on Steam Workshop</a>
+    <a class="btn ghost" href="#features">See what's in it</a>
+  </div>
+  <div class="hero-shot">
+    <img src="assets/screenshots/overview.jpg" alt="A running data center: server racks, network core, cooling and an operations console">
+  </div>
+</div>
+
+<section id="features" class="wrap">
+  <h2>What you get</h2>
+  <p class="lede">Every system below is built entirely from vanilla mechanics &mdash; no Harmony, no other dependencies &mdash; and every balance number lives in an XML file you can tune.</p>
+  <div class="grid">
+    <div class="card">
+      <h3>Server racks &amp; the network</h3>
+      <p>Racks produce Data Cartridges while powered, network-linked and cool. Status is always clear: Operational, No Power, No Network, Too Hot, Maintenance Required or Output Full.</p>
+    </div>
+    <div class="card">
+      <span class="ver">0.2</span>
+      <h3>Upgrade tree</h3>
+      <p>Ten follow-up research projects: faster output, less heat, slower wear, bigger network cores, a stronger research uplink, autonomous racks, and the two security doors.</p>
+    </div>
+    <div class="card">
+      <span class="ver">0.2</span>
+      <h3>Security</h3>
+      <p>A biometric access door and a metal detector gate keep out visitors and armed guests. Certify both and cartridges sell for 20% more.</p>
+    </div>
+    <div class="card">
+      <span class="ver">0.3</span>
+      <h3>The AI core &mdash; "Meridian"</h3>
+      <p>An on-site intelligence with a personality that runs your data center, forecasts maintenance, and sends small requests. No network access, no language model, nothing hostile.</p>
+    </div>
+    <div class="card">
+      <span class="ver">0.4</span>
+      <h3>Data specialization</h3>
+      <p>Switch any rack between standard, research, financial or medical cartridges &mdash; each with its own trade-off, once Data Classification is researched.</p>
+    </div>
+    <div class="card">
+      <span class="ver">0.4</span>
+      <h3>Espionage</h3>
+      <p>An occasional small raid built entirely from the game's own raid system. Raiders try to loot cartridges and flee rather than fight to the end.</p>
+    </div>
+    <div class="card">
+      <span class="ver">0.5</span>
+      <h3>Data contracts</h3>
+      <p>A buyer occasionally offers a timed bulk order for a silver bonus. Accept, decline, or let it lapse &mdash; nothing is ever taken from you for saying no.</p>
+    </div>
+  </div>
+</section>
+
+<section id="shots" class="wrap">
+  <h2>Screenshots</h2>
+  <p class="lede">A four-rack starter, the upgrade research tree, the AI core, and the specialization command.</p>
+  <div class="shots">
+    <figure>
+      <img src="assets/screenshots/overview.jpg" alt="A running server room">
+      <figcaption>A working data center: racks, network core, cooling and console.</figcaption>
+    </figure>
+    <figure>
+      <img src="assets/screenshots/upgrade-tree.jpg" alt="The upgrade research tree">
+      <figcaption>Ten upgrade projects, all XML-tunable.</figcaption>
+    </figure>
+    <figure>
+      <img src="assets/screenshots/ai-core.jpg" alt="The AI core inspect panel">
+      <figcaption>Meridian, the AI core, monitoring the racks.</figcaption>
+    </figure>
+    <figure>
+      <img src="assets/screenshots/specialization.jpg" alt="The rack specialization command">
+      <figcaption>Switching a rack to Financial Data.</figcaption>
+    </figure>
+  </div>
+</section>
+
+<section class="wrap">
+  <h2>How it plays</h2>
+  <div class="facts">
+    <div class="fact"><b>Power.</b> A rack draws 450 W; a small four-rack room needs about 2.5 kW.</div>
+    <div class="fact"><b>Heat.</b> Racks throttle above 32&deg;C, shut down at 50&deg;C, restart below 40&deg;C. No fires.</div>
+    <div class="fact"><b>Maintenance.</b> Racks wear as they run, need servicing around 50%, halt at 100% &mdash; never explode.</div>
+    <div class="fact"><b>Monitoring.</b> An Operations Console shift keeps racks at full output; unmonitored racks run at 65%.</div>
+    <div class="fact"><b>Balance.</b> A four-rack starter costs ~3,900 silver, draws ~2.5 kW, earns ~300 silver/day when well run &mdash; a few weeks to pay for itself.</div>
+    <div class="fact"><b>Compatibility.</b> RimWorld 1.5 or 1.6, no DLC needed. Safe to add to an existing save.</div>
+  </div>
+</section>
+
+<section id="changelog" class="wrap changelog">
+  <h2>Changelog</h2>
+  <div class="entry"><span class="v">0.5.0</span>Data contracts &mdash; a timed bulk order for a silver bonus, accept or decline freely.</div>
+  <div class="entry"><span class="v">0.4.0</span>Data specialization (research, financial or medical cartridges per rack) and the espionage raid. Real RimWorld 1.6 support added alongside 1.5.</div>
+  <div class="entry"><span class="v">0.3.0</span>The AI core, "Meridian" &mdash; an on-site intelligence with a personality that runs your data center.</div>
+  <div class="entry"><span class="v">0.2.0</span>A ten-project upgrade tree, a research uplink, and security: biometric doors and metal detector gates.</div>
+  <div class="entry"><span class="v">0.1.0</span>Initial release: server racks, network cores, cooling, a UPS, and an operations console.</div>
+</section>
+
+<footer class="wrap">
+  <div class="cols">
+    <div>
+      Design, code, textures, sounds and preview art: RimCore, all original. RimWorld is created by Ludeon Studios; this mod is unofficial.<br>
+      Open source under the <a href="https://opensource.org/licenses/MIT">MIT License</a>.
+    </div>
+    <div>
+      <a href="https://steamcommunity.com/sharedfiles/filedetails/?id=3806390467">Steam Workshop page</a>
+    </div>
+  </div>
+</footer>
+
+</body>
+</html>
